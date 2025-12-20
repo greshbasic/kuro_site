@@ -1,8 +1,12 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
+  LAST_VISIT_COUNT = 14
 
   def home
     @visit = Visit.first
+    if @visit.count.zero?
+      @visit.update!(count: LAST_VISIT_COUNT)
+    end
     @visit.increment!(:count)
   end
 

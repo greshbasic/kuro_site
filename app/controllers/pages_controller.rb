@@ -1,11 +1,7 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
-  LAST_VISIT_COUNT = 50
 
   def home
-    @visit = Visit.first
-    @visit.update!(count: LAST_VISIT_COUNT) if @visit.count.zero?
-    @visit.increment!(:count)
   end
 
   def kuro_pictures

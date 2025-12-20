@@ -29,11 +29,55 @@
         </p>
       </div>
 
+
       <div style="background: lime; color: hotpink; padding: 10px; font-family: 'Comic Sans MS'; display: inline-block;">
         <p style="font-size: 50px;">
           THIS:
         </p>
         <%= image_tag "kuro_intro.jpg", width: 333 %>
+        <h2 style="
+            color: cyan;
+            background: black;
+            padding: 10px;
+            font-size: 30px;
+            border: 3px dashed magenta;
+            display: inline-block;
+            margin-top: 20px;
+        ">
+          I AM THIS OLD → <span id="kuro-age">calculating...</span>
+        </h2>
+
+        <script>
+          const birthDate = new Date('2025-04-22T00:00:00');
+
+          function updateAge() {
+            const now = new Date();
+
+            let years = now.getFullYear() - birthDate.getFullYear();
+            let months = now.getMonth() - birthDate.getMonth();
+            let days = now.getDate() - birthDate.getDate();
+            let hours = now.getHours() - birthDate.getHours();
+            let minutes = now.getMinutes() - birthDate.getMinutes();
+            let seconds = now.getSeconds() - birthDate.getSeconds();
+
+            // adjust for negatives
+            if (seconds < 0) { seconds += 60; minutes -= 1; }
+            if (minutes < 0) { minutes += 60; hours -= 1; }
+            if (hours < 0) { hours += 24; days -= 1; }
+            if (days < 0) {
+              const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+              days += lastMonth.getDate();
+              months -= 1;
+            }
+            if (months < 0) { months += 12; years -= 1; }
+
+            document.getElementById('kuro-age').textContent =
+              `${years} years, ${months} months, ${days} days, ${hours}h ${minutes}m ${seconds}s`;
+          }
+
+          updateAge();
+          setInterval(updateAge, 1000);
+        </script>
       </div>
 
       <div style="background: orange; color: blue; padding: 10px; display: inline-block;">

@@ -1,5 +1,7 @@
 class PagesController < ApplicationController
   def home
+    @visit = Visit.first
+    @visit.increment!(:count)
   end
 
   def kuro_pictures

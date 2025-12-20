@@ -4,50 +4,141 @@
   background-attachment: fixed;
   background-size: 150px 150px;
 ">
+    <h1 style="text-align:center; color: hotpink; font-size: 50px; text-shadow: 2px 2px lime;">
+    KURO BLOG
+    </h1>
 
-<h1 style="text-align:center; color: hotpink; font-size: 50px; text-shadow: 2px 2px lime;">
-  KURO BLOG
-</h1>
-
-<% @posts.each do |post| %>
-  <div style="
-        border: 5px dashed cyan;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        margin: 20px auto;
+    <form method="get" action="/blog" style="
+        background: black;
         padding: 15px;
+        border: 4px dashed lime;
         max-width: 800px;
-        border-radius: 15px;
+        margin: 20px auto;
+        text-align: center;
+        color: white;
         font-family: 'Comic Sans MS', cursive;
-        box-shadow: 0 0 20px magenta;
-      ">
-    <h2 style="color: lime;"><%= post[:title] %></h2>
-    <p style="color: yellow; font-size: 16px;"><%= post[:date] %></p>
-    <div><%= post[:content].html_safe %></div>
-  </div>
-<% end %>
+    ">
 
-<div style="text-align:center; margin-top: 20px;">
-  <% if @page > 1 %>
-    <%= link_to "⬅ Previous", blog_path(page: @page-1), style: "margin-right:10px; font-size:20px; color: cyan;" %>
-  <% end %>
-  <% if @page < @total_pages %>
-    <%= link_to "Next ➡", blog_path(page: @page+1), style: "margin-left:10px; font-size:20px; color: cyan;" %>
-  <% end %>
-</div>
+    <strong>FIND KURO POST BY DATE</strong><br><br>
 
-<br><br>
-<a href="/" style="
-    font-size: 30px; 
-    color: lime; 
-    background: black; 
-    padding: 10px; 
-    border: 4px dashed pink;
-    display: inline-block;
-    margin-top: 20px;
-    text-decoration: none;
-">
-← BACK
-</a>
+    <select name="year">
+        <option value="">Year</option>
+        <% (2024..2026).each do |y| %>
+            <option value="<%= y %>" <%= "selected" if params[:year].present? && params[:year] == y.to_s %>><%= y %></option>
+        <% end %>
+    </select>
+
+    <select name="month">
+        <option value="">Month</option>
+        <% (1..12).each do |m| %>
+            <option value="<%= m %>" <%= "selected" if params[:month].present? && params[:month] == m.to_s %>><%= Date::MONTHNAMES[m] %></option>
+        <% end %>
+    </select>
+
+    <input
+        type="number"
+        name="day"
+        min="1"
+        max="31"
+        value="<%= params[:day] %>"
+        placeholder="DAY"
+        style="width: 70px;"
+    >
+
+    <br><br>
+
+    <button style="
+        font-size: 18px;
+        background: hotpink;
+        border: 3px dashed cyan;
+        padding: 5px 15px;
+        cursor: pointer;
+    ">
+        SEARCH
+    </button>
+
+    &nbsp;&nbsp;
+
+    <a href="/blog" style="
+        font-size: 18px;
+        background: gray;
+        color: black;
+        border: 3px dashed white;
+        padding: 5px 15px;
+        text-decoration: none;
+    ">
+        CLEAR
+    </a>
+
+    </form>
+
+    <% if @posts.empty? %>
+        <div style="
+                border: 5px dashed cyan;
+                background: rgba(0,0,0,0.85);
+                color: white;
+                margin: 20px auto;
+                padding: 15px;
+                max-width: 800px;
+                border-radius: 15px;
+                font-family: 'Comic Sans MS', cursive;
+                box-shadow: 0 0 20px magenta;
+            ">
+            <h2 style="color: lime;"><%= "NOTHING FOUND" %></h2>
+            <div><%= "PROBABLY SLEPT AND PLAYED" %></div>
+        </div>
+    <% end %>
+
+    <% @posts.each do |post| %>
+        <div style="
+                border: 5px dashed cyan;
+                background: rgba(0,0,0,0.85);
+                color: white;
+                margin: 20px auto;
+                padding: 15px;
+                max-width: 800px;
+                border-radius: 15px;
+                font-family: 'Comic Sans MS', cursive;
+                box-shadow: 0 0 20px magenta;
+            ">
+            <h2 style="color: lime;"><%= post[:title] %></h2>
+            <p style="color: yellow; font-size: 16px;"><%= post[:date] %></p>
+            <div><%= post[:content].html_safe %></div>
+        </div>
+    <% end %>
+
+    <div style="text-align:center; margin-top: 20px;">
+    <% if @page > 1 %>
+        <%= link_to "⬅ Previous", blog_path(
+            year: params[:year], 
+            month: params[:month], 
+            day: params[:day], 
+            page: @page - 1
+            ), style: "margin-right:10px; font-size:20px; color: cyan;" %>
+    <% end %>
+    <% if @page < @total_pages %>
+        <%= link_to "Next ➡", blog_path(
+            year: params[:year], 
+            month: params[:month], 
+            day: params[:day], 
+            page: @page + 1
+            ), style: "margin-left:10px; font-size:20px; color: cyan;" %>
+    <% end %>
+    </div>
+
+    <br><br>
+
+    <a href="/" style="
+        font-size: 30px; 
+        color: lime; 
+        background: black; 
+        padding: 10px; 
+        border: 4px dashed pink;
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+    ">
+    ← BACK
+    </a>
 
 </body>

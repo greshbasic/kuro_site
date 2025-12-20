@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
-  LAST_VISIT_COUNT = 23
+  LAST_VISIT_COUNT = 43
 
   def home
     @visit = Visit.first
@@ -48,16 +48,28 @@ class PagesController < ApplicationController
     all_posts = Dir.glob(Rails.root.join("app/posts/*.md")).map do |file|
       basename = File.basename(file, ".md")
       date_str, title_str = basename.split("_", 2)
+
       {
         filename: basename,
         title: title_str ? title_str.tr('_', ' ').titleize : "Untitled",
-        date: date_str || "Unknown",
+        date: date_str,
         content: Kramdown::Document.new(File.read(file)).to_html
       }
     end
-  
-    @posts = all_posts.sort_by { |p| p[:date] }.reverse
 
+    if params[:year].present?
+      year  = params[:year].to_s.strip
+      month = params[:month].to_s.strip.rjust(2,'0') if params[:month].present?
+      day   = params[:day].to_s.strip.rjust(2,'0') if params[:day].present?
+
+      prefix = year
+      prefix += "-#{month}" if month.present?
+      prefix += "-#{day}"   if day.present?
+
+      all_posts = all_posts.select { |p| p[:date].start_with?(prefix) }
+    end
+
+    @posts = all_posts.sort_by { |p| p[:date] }.reverse
     @page = (params[:page] || 1).to_i
     @total_pages = (@posts.size / POSTS_PER_PAGE.to_f).ceil
     @posts = @posts.slice((@page - 1) * POSTS_PER_PAGE, POSTS_PER_PAGE)

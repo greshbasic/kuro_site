@@ -1,0 +1,52 @@
+<body style="
+  background-image: url('<%= asset_path 'kuro_intro.jpg' %>');
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-size: 150px 150px;
+  text-align: center;
+  font-family: 'Comic Sans MS', cursive;
+">
+
+  <h1 style="
+      color: hotpink; 
+      background: lime; 
+      font-size: 60px; 
+      padding: 20px; 
+      border: 5px dashed purple;
+      margin-bottom: 30px;
+      transform: rotate(-2deg);
+    ">
+    MY TOYS
+  </h1>
+
+  <% @toys.each do |img| %>
+    <div style="
+        display: inline-block; 
+        margin: 10px; 
+        padding: 5px; 
+        border: 3px dotted orange; 
+        background: yellow;
+        transform: rotate(<%= rand(-10..10) %>deg);
+      ">
+      <%= image_tag img, width: rand(150..400) %>
+      <p style="color: hotpink; font-size: 18px;">
+        <%= @toy_captions[img] %>
+      </p>
+    </div>
+  <% end %>
+
+  <br><br>
+  <a href="/" style="
+      font-size: 30px; 
+      color: lime; 
+      background: black; 
+      padding: 10px; 
+      border: 4px dashed pink;
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+    ">
+    ← Back Home
+  </a>
+
+</body>

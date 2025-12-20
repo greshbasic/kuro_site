@@ -1,7 +1,0 @@
-<h1>ME (I UPDATE!)</h1>
-
-<% Dir.glob(Rails.root.join("app/assets/images/*")).each do |img_path| %>
-  <% filename = File.basename(img_path) %>
-  <%= image_tag filename, width: rand(100..500) %>
-  <br>
-<% end %>

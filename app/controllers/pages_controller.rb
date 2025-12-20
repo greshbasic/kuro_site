@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
-  LAST_VISIT_COUNT = 43
+  LAST_VISIT_COUNT = 50
 
   def home
     @visit = Visit.first

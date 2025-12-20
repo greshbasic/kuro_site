@@ -1,4 +1,6 @@
 class PagesController < ApplicationController
+  POSTS_PER_PAGE = 5
+
   def home
     @visit = Visit.first
     @visit.increment!(:count)
@@ -36,5 +38,24 @@ class PagesController < ApplicationController
       "toys/spring.jpg" => "why do they keep leaving me",
       "toys/table_toy.jpg" => "i want to take it off",
     }
+  end
+
+  def blog
+    all_posts = Dir.glob(Rails.root.join("app/posts/*.md")).map do |file|
+      basename = File.basename(file, ".md")
+      date_str, title_str = basename.split("_", 2)
+      {
+        filename: basename,
+        title: title_str ? title_str.tr('_', ' ').titleize : "Untitled",
+        date: date_str || "Unknown",
+        content: Kramdown::Document.new(File.read(file)).to_html
+      }
+    end
+  
+    @posts = all_posts.sort_by { |p| p[:date] }.reverse
+
+    @page = (params[:page] || 1).to_i
+    @total_pages = (@posts.size / POSTS_PER_PAGE.to_f).ceil
+    @posts = @posts.slice((@page - 1) * POSTS_PER_PAGE, POSTS_PER_PAGE)
   end
 end

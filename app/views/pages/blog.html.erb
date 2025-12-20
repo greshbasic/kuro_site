@@ -1,0 +1,53 @@
+<body style="
+  background-image: url('<%= asset_path 'kuro_intro.jpg' %>');
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-size: 150px 150px;
+">
+
+<h1 style="text-align:center; color: hotpink; font-size: 50px; text-shadow: 2px 2px lime;">
+  KURO BLOG
+</h1>
+
+<% @posts.each do |post| %>
+  <div style="
+        border: 5px dashed cyan;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        margin: 20px auto;
+        padding: 15px;
+        max-width: 800px;
+        border-radius: 15px;
+        font-family: 'Comic Sans MS', cursive;
+        box-shadow: 0 0 20px magenta;
+      ">
+    <h2 style="color: lime;"><%= post[:title] %></h2>
+    <p style="color: yellow; font-size: 16px;"><%= post[:date] %></p>
+    <div><%= post[:content].html_safe %></div>
+  </div>
+<% end %>
+
+<div style="text-align:center; margin-top: 20px;">
+  <% if @page > 1 %>
+    <%= link_to "⬅ Previous", blog_path(page: @page-1), style: "margin-right:10px; font-size:20px; color: cyan;" %>
+  <% end %>
+  <% if @page < @total_pages %>
+    <%= link_to "Next ➡", blog_path(page: @page+1), style: "margin-left:10px; font-size:20px; color: cyan;" %>
+  <% end %>
+</div>
+
+<br><br>
+<a href="/" style="
+    font-size: 30px; 
+    color: lime; 
+    background: black; 
+    padding: 10px; 
+    border: 4px dashed pink;
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+">
+← BACK
+</a>
+
+</body>

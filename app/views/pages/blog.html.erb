@@ -132,22 +132,64 @@
   <% @posts.each do |post| %>
     <div
       style="
-                border: 5px dashed cyan;
-                background: rgba(0,0,0,0.85);
-                color: white;
-                margin: 20px auto;
-                padding: 15px;
-                max-width: 800px;
-                border-radius: 15px;
-                font-family: 'Comic Sans MS'
-                box-shadow: 0 0 20px magenta;
-            "
+          border: 5px dashed cyan;
+          background: rgba(0,0,0,0.85);
+          color: white;
+          margin: 20px auto;
+          padding: 15px;
+          max-width: 800px;
+          border-radius: 15px;
+          font-family: 'Comic Sans MS';
+          box-shadow: 0 0 20px magenta;
+        "
     >
       <h2 style="color: lime;"><%= post[:title] %></h2>
       <p style="color: yellow; font-size: 16px;"><%= post[:date] %></p>
-      <div><%= post[:content].html_safe %></div>
+      <div>
+        <%
+          content =
+            post[:content].gsub(/<img [^>]*src="([^"]+)"[^>]*>/) do
+              img_url = $1
+              "<button class=\"toggle-img\" data-src=\"#{img_url}\" style=\"display:block; margin:10px auto; padding:5px 10px; cursor:pointer;\">SHOW IMAGE</button>"
+            end
+        %>
+        <%= content.html_safe %>
+      </div>
     </div>
   <% end %>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".toggle-img").forEach((button) => {
+        button.addEventListener("click", () => {
+          let imgId = button.dataset.id;
+          let img = document.getElementById(imgId);
+
+          if (!img) {
+            img = document.createElement("img");
+            img.id = imgId;
+            img.src = button.dataset.src;
+            img.style.maxWidth = "100%";
+            img.style.height = "auto";
+            img.style.display = "block";
+            img.style.margin = "10px auto";
+            button.insertAdjacentElement("afterend", img);
+
+            button.textContent = "HIDE IMAGE";
+            return;
+          }
+
+          if (img.style.display === "none") {
+            img.style.display = "block";
+            button.textContent = "HIDE IMAGE";
+          } else {
+            img.style.display = "none";
+            button.textContent = "SHOW IMAGE";
+          }
+        });
+      });
+    });
+  </script>
 
   <div style="text-align:center; margin-top: 20px;">
     <% if @page > 1 %>

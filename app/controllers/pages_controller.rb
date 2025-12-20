@@ -52,11 +52,18 @@ class PagesController < ApplicationController
           basename = File.basename(file, '.md')
           date_str, title_str = basename.split('_', 2)
 
+          markdown = File.read(file)
+          markdown = markdown.gsub(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
+            alt = $1
+            path = $2
+            "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
+          end
+
           {
             filename: basename,
             title: title_str ? title_str.tr('_', ' ').titleize : 'Untitled',
             date: date_str,
-            content: Kramdown::Document.new(File.read(file)).to_html,
+            content: Kramdown::Document.new(markdown).to_html,
           }
         end
 

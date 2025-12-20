@@ -4,67 +4,70 @@ class PagesController < ApplicationController
 
   def home
     @visit = Visit.first
-    if @visit.count.zero?
-      @visit.update!(count: LAST_VISIT_COUNT)
-    end
+    @visit.update!(count: LAST_VISIT_COUNT) if @visit.count.zero?
     @visit.increment!(:count)
   end
 
   def kuro_pictures
-    @images = Dir.glob(Rails.root.join("app/assets/images/kuro/*.{jpg,jpeg,png,gif}")).map do |f|
-      "kuro/#{File.basename(f)}"
-    end
+    @images =
+      Dir
+        .glob(Rails.root.join('app/assets/images/kuro/*.{jpg,jpeg,png,gif}'))
+        .map { |f| "kuro/#{File.basename(f)}" }
 
     @img_captions = {
-      "kuro/adopt.jpg" => "day i adopted owner",
-      "kuro/baby.jpg" => "first baf",
-      "kuro/chair.jpg" => "favorite chare",
-      "kuro/chillin.jpg" => "chillin.",
-      "kuro/eepy.jpg" => "so eepy",
-      "kuro/hiding.jpg" => "can u find me?",
-      "kuro/strut.jpg" => "woooo",
-      "kuro/window_nap.jpg" => "window time",
-      "kuro/working.jpg" => "me making page",
-      "kuro/yoga.jpg" => "what u look at",
+      'kuro/adopt.jpg' => 'day i adopted owner',
+      'kuro/baby.jpg' => 'first baf',
+      'kuro/chair.jpg' => 'favorite chare',
+      'kuro/chillin.jpg' => 'chillin.',
+      'kuro/eepy.jpg' => 'so eepy',
+      'kuro/hiding.jpg' => 'can u find me?',
+      'kuro/strut.jpg' => 'woooo',
+      'kuro/window_nap.jpg' => 'window time',
+      'kuro/working.jpg' => 'me making page',
+      'kuro/yoga.jpg' => 'what u look at',
     }
   end
 
   def kuro_toys
-    @toys = Dir.glob(Rails.root.join("app/assets/images/toys/*.{jpg,jpeg,png,gif}")).map do |f|
-      "toys/#{File.basename(f)}"
-    end
+    @toys =
+      Dir
+        .glob(Rails.root.join('app/assets/images/toys/*.{jpg,jpeg,png,gif}'))
+        .map { |f| "toys/#{File.basename(f)}" }
 
     @toy_captions = {
-      "toys/mouse_wand.jpg" => "i like to play this in baftub",
-      "toys/octopus.jpg" => "michael",
-      "toys/puzzle1.jpg" => "i like 2 take the balls out",
-      "toys/puzzle2.jpg" => "spin spin",
-      "toys/spring.jpg" => "why do they keep leaving me",
-      "toys/table_toy.jpg" => "i want to take it off",
+      'toys/mouse_wand.jpg' => 'i like to play this in baftub',
+      'toys/octopus.jpg' => 'michael',
+      'toys/puzzle1.jpg' => 'i like 2 take the balls out',
+      'toys/puzzle2.jpg' => 'spin spin',
+      'toys/spring.jpg' => 'why do they keep leaving me',
+      'toys/table_toy.jpg' => 'i want to take it off',
     }
   end
 
   def blog
-    all_posts = Dir.glob(Rails.root.join("app/posts/*.md")).map do |file|
-      basename = File.basename(file, ".md")
-      date_str, title_str = basename.split("_", 2)
+    all_posts =
+      Dir
+        .glob(Rails.root.join('app/posts/*.md'))
+        .map do |file|
+          basename = File.basename(file, '.md')
+          date_str, title_str = basename.split('_', 2)
 
-      {
-        filename: basename,
-        title: title_str ? title_str.tr('_', ' ').titleize : "Untitled",
-        date: date_str,
-        content: Kramdown::Document.new(File.read(file)).to_html
-      }
-    end
+          {
+            filename: basename,
+            title: title_str ? title_str.tr('_', ' ').titleize : 'Untitled',
+            date: date_str,
+            content: Kramdown::Document.new(File.read(file)).to_html,
+          }
+        end
 
     if params[:year].present?
-      year  = params[:year].to_s.strip
-      month = params[:month].to_s.strip.rjust(2,'0') if params[:month].present?
-      day   = params[:day].to_s.strip.rjust(2,'0') if params[:day].present?
+      year = params[:year].to_s.strip
+      month = params[:month].to_s.strip.rjust(2, '0') if params[:month].present?
+      day = params[:day].to_s.strip.rjust(2, '0') if params[:day].present?
 
       prefix = year
       prefix += "-#{month}" if month.present?
-      prefix += "-#{day}"   if day.present?
+      prefix += "-#{day}" if day.present?
 
       all_posts = all_posts.select { |p| p[:date].start_with?(prefix) }
     end

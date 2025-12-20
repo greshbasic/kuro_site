@@ -1,13 +1,15 @@
-<body style="
+<body
+  style="
   background-image: url('<%= asset_path 'kuro_intro.jpg' %>');
   background-repeat: repeat;
   background-attachment: fixed;
   background-size: 150px 150px;
   text-align: center;
   font-family: 'Comic Sans MS', cursive;
-">
-
-  <h1 style="
+"
+>
+  <h1
+    style="
       color: cyan; 
       background: magenta; 
       font-size: 60px; 
@@ -15,12 +17,14 @@
       border: 5px dotted lime;
       margin-bottom: 30px;
       transform: rotate(3deg);
-    ">
+    "
+  >
     ME (I UPDATE!)
   </h1>
 
   <% @images.each do |img| %>
-    <div style="
+    <div
+      style="
         display: inline-block; 
         margin: 10px; 
         padding: 5px; 
@@ -28,21 +32,26 @@
         background: lightblue;
         transform: rotate(<%= rand(-15..15) %>deg);
         text-align: center;
-      ">
+      "
+    >
       <%= image_tag img, width: rand(150..400) %>
-      <p style="
+      <p
+        style="
           color: black;
           font-size: 18px;
           font-weight: bold;
           margin: 5px 0 0 0;
-        ">
-        <%= @img_captions[img]%>
+        "
+      >
+        <%= @img_captions[img] %>
       </p>
     </div>
   <% end %>
 
-  <br><br>
-  <a href="/" style="
+  <br /><br />
+  <a
+    href="/"
+    style="
       font-size: 30px; 
       color: magenta; 
       background: cyan; 
@@ -52,8 +61,8 @@
       margin-top: 20px;
       text-decoration: none;
       transform: rotate(-2deg);
-    ">
+    "
+  >
     ← BACK
   </a>
-
 </body>

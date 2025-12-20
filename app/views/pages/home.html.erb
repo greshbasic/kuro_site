@@ -1,45 +1,54 @@
-<body style="
+<body
+  style="
   background-image: url('<%= asset_path 'kuro_intro.jpg' %>');
   background-repeat: repeat;
   background-attachment: fixed;
   background-size: 150px 150px;
-">
-
+"
+>
   <center>
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
-
+    <div
+      style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;"
+    >
       <!-- Full-width sections -->
-      <div style="background: black; color: lime; padding: 10px; width: 100%; text-align: center;">
+      <div
+        style="background: black; color: lime; padding: 10px; width: 100%; text-align: center;"
+      >
         <h1>HELLO EVERONE KURO</h1>
       </div>
 
-      <div style="background: white; color: red; padding: 5px; width: 100%; text-align: center;">
+      <div
+        style="background: white; color: red; padding: 5px; width: 100%; text-align: center;"
+      >
         <h3>YES 黒 <---</h3>
-        <p> it means black </p>
-        <p> and also sounds like "crow" </p>
+        <p>it means black</p>
+        <p>and also sounds like "crow"</p>
       </div>
 
-      <div style="background: yellow; color: purple; padding: 5px; width: 100%; text-align: center;">
-        <marquee scrollamount="20">
-          MEOW MEOW MEOW MEOW MEOW
-        </marquee>
+      <div
+        style="background: yellow; color: purple; padding: 5px; width: 100%; text-align: center;"
+      >
+        <marquee scrollamount="20"> MEOW MEOW MEOW MEOW MEOW </marquee>
       </div>
 
-      <div style="background: black; color: lime; padding: 10px; width: 100%; text-align: center;">
-        <p style="font-size: 30px;">
-          WELCME TO MY WEBSIGHT
+      <div
+        style="background: black; color: lime; padding: 10px; width: 100%; text-align: center;"
+      >
+        <p style="font-size: 30px;">WELCME TO MY WEBSIGHT</p>
+        <p>i live in minneapolis minnesota with a guy who knows some rails</p>
+        <p>
+          i am named after the one piece character sanji, from his epithet "kuro
+          ashi no sanji"
         </p>
-        <p> i live in minneapolis minnesota with a guy who knows some rails </p>
-        <p> i am named after the one piece character sanji, from his epithet "kuro ashi no sanji"
       </div>
 
-
-      <div style="background: lime; color: hotpink; padding: 10px; font-family: 'Comic Sans MS'; display: inline-block;">
-        <p style="font-size: 50px;">
-          THIS:
-        </p>
-        <%= image_tag "kuro_intro.jpg", width: 333 %>
-        <h2 style="
+      <div
+        style="background: lime; color: hotpink; padding: 10px; font-family: 'Comic Sans MS'; display: inline-block;"
+      >
+        <p style="font-size: 50px;">THIS:</p>
+        <%= image_tag 'kuro_intro.jpg', width: 333 %>
+        <h2
+          style="
             color: cyan;
             background: black;
             padding: 10px;
@@ -47,12 +56,13 @@
             border: 3px dashed magenta;
             display: inline-block;
             margin-top: 20px;
-        ">
+        "
+        >
           I AM THIS OLD → <span id="kuro-age">calculating...</span>
         </h2>
 
         <script>
-          const birthDate = new Date('2025-04-22T00:00:00');
+          const birthDate = new Date("2025-04-22T00:00:00");
 
           function updateAge() {
             const now = new Date();
@@ -64,18 +74,31 @@
             let minutes = now.getMinutes() - birthDate.getMinutes();
             let seconds = now.getSeconds() - birthDate.getSeconds();
 
-            if (seconds < 0) { seconds += 60; minutes -= 1; }
-            if (minutes < 0) { minutes += 60; hours -= 1; }
-            if (hours < 0) { hours += 24; days -= 1; }
+            if (seconds < 0) {
+              seconds += 60;
+              minutes -= 1;
+            }
+            if (minutes < 0) {
+              minutes += 60;
+              hours -= 1;
+            }
+            if (hours < 0) {
+              hours += 24;
+              days -= 1;
+            }
             if (days < 0) {
               const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
               days += lastMonth.getDate();
               months -= 1;
             }
-            if (months < 0) { months += 12; years -= 1; }
+            if (months < 0) {
+              months += 12;
+              years -= 1;
+            }
 
-            document.getElementById('kuro-age').textContent =
-              `${years} years, ${months} months, ${days} days, ${hours}h ${minutes}m ${seconds}s`;
+            document.getElementById(
+              "kuro-age"
+            ).textContent = `${years} years, ${months} months, ${days} days, ${hours}h ${minutes}m ${seconds}s`;
           }
 
           updateAge();
@@ -83,7 +106,9 @@
         </script>
       </div>
 
-      <div style="background: orange; color: blue; padding: 10px; display: inline-block;">
+      <div
+        style="background: orange; color: blue; padding: 10px; display: inline-block;"
+      >
         <h3>MY FAVORIT</h3>
         <ul>
           <li>1. TOYS</li>
@@ -92,31 +117,28 @@
         </ul>
       </div>
 
-      <div style="background: gray; color: black; padding: 5px; display: inline-block;">
-        <hr style="border: 5px dotted grey">
-        <a href="/blog">
-          BLOG
-        </a>
-        <hr>
-        <a href="/kuro_pictures">
-          CLICK FOR MORE ME (KURO)
-        </a>
-        <hr>
-        <a href="/kuro_toys">
-          MY TOYS (KURO)
-        </a>
+      <div
+        style="background: gray; color: black; padding: 5px; display: inline-block;"
+      >
+        <hr style="border: 5px dotted grey" />
+        <a href="/blog"> BLOG </a>
+        <hr />
+        <a href="/kuro_pictures"> CLICK FOR MORE ME (KURO) </a>
+        <hr />
+        <a href="/kuro_toys"> MY TOYS (KURO) </a>
       </div>
-
     </div>
   </center>
-  <h2 style="
+  <h2
+    style="
     color: yellow;
     background: black;
     font-size: 30px;
     padding: 10px;
     border: 3px dashed magenta;
     display: inline-block;
-  ">
+  "
+  >
     TOTAL VISITS → <%= @visit.count %>
   </h2>
 </body>

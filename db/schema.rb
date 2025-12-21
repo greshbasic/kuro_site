@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_20_013144) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_21_171205) do
+  create_table "comments", force: :cascade do |t|
+    t.string "post_filename"
+    t.string "initials"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "visits", force: :cascade do |t|
     t.integer "count"
     t.datetime "created_at", null: false

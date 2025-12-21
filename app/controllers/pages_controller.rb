@@ -87,4 +87,26 @@ class PagesController < ApplicationController
         .glob(Rails.root.join('app/assets/images/places/*.{jpg,jpeg,png,gif}'))
         .map { |f| "places/#{File.basename(f)}" }
   end
+
+  def show_post
+    filename = params[:filename]
+    file = Rails.root.join("app/posts/#{filename}.md")
+    markdown = File.read(file)
+
+    markdown.gsub!(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
+      alt = $1
+      path = $2
+      "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
+    end
+
+    @post = {
+      title: filename.split("_", 2)[1].tr('_', ' ').titleize,
+      filename: filename,
+      date: filename.split("_", 2)[0],
+      content: Kramdown::Document.new(markdown).to_html
+    }
+
+    @comments = Comment.where(post_filename: @post[:filename]).order(created_at: :asc)
+    @comment = Comment.new(post_filename: params[:filename])
+  end
 end

@@ -1,0 +1,130 @@
+<body
+  style="
+  background-image: url('<%= asset_path 'kuro_intro.jpg' %>');
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-size: 150px 150px;
+  text-align: center;
+  font-family: 'Comic Sans MS';
+"
+>
+  <h1
+    style="text-align:center; color: hotpink; font-size: 50px; text-shadow: 2px 2px lime;"
+  >
+    <%= @post[:title] %>
+  </h1>
+  <p style="color: yellow; font-size: 16px;"><%= @post[:date] %></p>
+
+  <div
+    style="
+    border: 5px dashed cyan;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    margin: 20px auto;
+    padding: 15px;
+    max-width: 800px;
+    border-radius: 15px;
+    font-family: 'Comic Sans MS';
+    box-shadow: 0 0 20px magenta;
+  "
+  >
+    <h2 style="color: lime;"><%= @post[:title] %></h2>
+    <p style="color: yellow; font-size: 16px;"><%= @post[:date] %></p>
+    <div>
+      <%
+        content =
+          @post[:content].gsub(/<img [^>]*src="([^"]+)"[^>]*>/) do
+            img_url = $1
+            "<img src='#{img_url}' style='max-width:100%; height:auto; display:block; margin:10px auto;' />"
+          end
+      %>
+      <%= content.html_safe %>
+    </div>
+  </div>
+
+  <h2 style="color: lime; margin-top: 30px;">COMMENTS</h2>
+
+  <div style="max-width: 800px; margin: 0 auto;">
+    <% @comments.each do |c| %>
+      <div
+        style="
+        background: rgba(0,0,0,0.85);  /* solid-ish background */
+        border: 2px dotted hotpink;
+        margin: 15px 0;
+        padding: 15px;
+        border-radius: 10px;
+        color: white;
+      "
+      >
+        <div style="margin-bottom: 8px;">
+          <strong style="color: hotpink;"><%= c.initials %></strong>
+          (<span style="color: cyan; font-size: 14px;"><%=
+              c.created_at.strftime('%Y-%m-%d %H:%M')
+            %></span
+          >)
+        </div>
+        <div style="color: white; font-size: 16px; line-height: 1.5;">
+          <%= c.body %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div
+    style="
+    border: 4px dashed hotpink;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 15px;
+    max-width: 800px;
+    margin: 20px auto;
+    border-radius: 15px;
+    font-family: 'Comic Sans MS';
+    box-shadow: 0 0 15px magenta;
+  "
+  >
+    <h3 style="color: lime; margin-top: 0;">SAY HELLO</h3>
+
+    <%= form_with(model: @comment, url: comments_path, local: true) do |f| %>
+      <%= f.hidden_field :post_filename, value: @post[:filename] %>
+
+      <p>
+        <%= f.label :initials, 'INITIALS' %><br />
+        <%=
+          f.text_field :initials,
+                       maxlength: 3,
+                       placeholder: 'ABC',
+                       style: 'width: 60px; padding: 5px;'
+        %>
+      </p>
+
+      <p>
+        <%= f.label :body, 'COMMENT' %><br />
+        <%= f.text_area :body, rows: 3, style: 'width: 100%; padding: 5px;' %>
+      </p>
+
+      <%=
+        f.submit 'POST IT',
+                 style:
+                   'background: hotpink; border: 2px dashed cyan; padding: 5px 15px; cursor: pointer;'
+      %>
+    <% end %>
+  </div>
+
+  <br /><br />
+  <a
+    href="/blog"
+    style="
+      font-size: 30px;
+      color: lime;
+      background: black;
+      padding: 10px;
+      border: 4px dashed pink;
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+  "
+  >
+    ← BACK
+  </a>
+</body>

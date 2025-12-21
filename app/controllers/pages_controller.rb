@@ -39,6 +39,21 @@ class PagesController < ApplicationController
     }
   end
 
+  def memoriam
+    @pets =
+      Dir
+        .glob(
+          Rails.root.join('app/assets/images/memoriam/*.{jpg,jpeg,png,gif}'),
+        )
+        .map { |f| "memoriam/#{File.basename(f)}" }
+
+    @pet_captions = {
+      'memoriam/zoe.jpg' => 'Zoe Bubbles',
+      'memoriam/zeke.jpg' => 'Zeke Giggles',
+      'memoriam/ed_mu.jpg' => 'Edgar and Mushi',
+    }
+  end
+
   def blog
     all_posts =
       Dir
@@ -100,13 +115,14 @@ class PagesController < ApplicationController
     end
 
     @post = {
-      title: filename.split("_", 2)[1].tr('_', ' ').titleize,
+      title: filename.split('_', 2)[1].tr('_', ' ').titleize,
       filename: filename,
-      date: filename.split("_", 2)[0],
-      content: Kramdown::Document.new(markdown).to_html
+      date: filename.split('_', 2)[0],
+      content: Kramdown::Document.new(markdown).to_html,
     }
 
-    @comments = Comment.where(post_filename: @post[:filename]).order(created_at: :desc)
+    @comments =
+      Comment.where(post_filename: @post[:filename]).order(created_at: :desc)
     @comment = Comment.new(post_filename: params[:filename])
   end
 end

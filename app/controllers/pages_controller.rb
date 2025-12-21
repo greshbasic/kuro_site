@@ -1,8 +1,7 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
 
-  def home
-  end
+  def home; end
 
   def kuro_pictures
     @images =
@@ -49,11 +48,12 @@ class PagesController < ApplicationController
           date_str, title_str = basename.split('_', 2)
 
           markdown = File.read(file)
-          markdown = markdown.gsub(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
-            alt = $1
-            path = $2
-            "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
-          end
+          markdown =
+            markdown.gsub(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
+              alt = $1
+              path = $2
+              "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
+            end
 
           {
             filename: basename,
@@ -79,5 +79,12 @@ class PagesController < ApplicationController
     @page = (params[:page] || 1).to_i
     @total_pages = (@posts.size / POSTS_PER_PAGE.to_f).ceil
     @posts = @posts.slice((@page - 1) * POSTS_PER_PAGE, POSTS_PER_PAGE)
+  end
+
+  def places
+    @places =
+      Dir
+        .glob(Rails.root.join('app/assets/images/places/*.{jpg,jpeg,png,gif}'))
+        .map { |f| "places/#{File.basename(f)}" }
   end
 end

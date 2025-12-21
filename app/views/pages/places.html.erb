@@ -1,0 +1,59 @@
+<body
+  style="
+    background-image: url('<%= asset_path 'kuro_intro.jpg' %>');
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: 150px 150px;
+    text-align: center;
+    font-family: 'Comic Sans MS'
+  "
+>
+  <h1
+    style="
+      color: cyan;
+      background: black;
+      font-size: 60px;
+      padding: 20px;
+      border: 6px double hotpink;
+      margin-bottom: 30px;
+      transform: rotate(2deg);
+      text-shadow: 3px 3px purple;
+    "
+  >
+    FAVORIT PLACES
+  </h1>
+
+  <% @places.each do |img| %>
+    <div
+      style="
+        display: inline-block;
+        margin: 12px;
+        padding: 10px;
+        border: 4px dashed lime;
+        background: #111;
+        transform: rotate(<%= rand(-6..6) %>deg);
+        box-shadow: 0 0 15px cyan;
+      "
+    >
+      <%= image_tag img, width: rand(160..380) %>
+    </div>
+  <% end %>
+
+  <br /><br />
+
+  <a
+    href="/"
+    style="
+      font-size: 30px;
+      color: black;
+      background: cyan;
+      padding: 10px;
+      border: 4px dotted hotpink;
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+    "
+  >
+    ← BACK
+  </a>
+</body>

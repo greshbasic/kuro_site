@@ -162,19 +162,17 @@
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".toggle-img").forEach((button) => {
         button.addEventListener("click", () => {
-          let imgId = button.dataset.id;
-          let img = document.getElementById(imgId);
+          let img = button.nextElementSibling;
 
-          if (!img) {
+          if (!img || img.tagName !== "IMG") {
             img = document.createElement("img");
-            img.id = imgId;
             img.src = button.dataset.src;
             img.style.maxWidth = "100%";
             img.style.height = "auto";
             img.style.display = "block";
             img.style.margin = "10px auto";
-            button.insertAdjacentElement("afterend", img);
 
+            button.insertAdjacentElement("afterend", img);
             button.textContent = "HIDE IMAGE";
             return;
           }

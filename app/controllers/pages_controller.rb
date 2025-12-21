@@ -106,7 +106,7 @@ class PagesController < ApplicationController
       content: Kramdown::Document.new(markdown).to_html
     }
 
-    @comments = Comment.where(post_filename: @post[:filename]).order(created_at: :asc)
+    @comments = Comment.where(post_filename: @post[:filename]).order(created_at: :desc)
     @comment = Comment.new(post_filename: params[:filename])
   end
 end

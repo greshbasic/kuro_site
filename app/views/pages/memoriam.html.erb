@@ -38,6 +38,36 @@
     </div>
   <% end %>
 
+  <div
+    style="
+    max-width: 300px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #eee;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  "
+  >
+    <p style="font-size:20px;"><%= Respect.instance.count %> RESPECTS</p>
+
+    <%=
+      button_to 'PAY ONE RESPECTS',
+                respects_path,
+                method: :post,
+                style:
+                  '
+          background:black;
+          color:hotpink;
+          border:2px solid hotpink;
+          padding:10px 20px;
+          border-radius:10px;
+          cursor:pointer;
+        '
+    %>
+  </div>
+
   <br /><br />
   <a
     href="/"

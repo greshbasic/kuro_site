@@ -1,0 +1,2 @@
+class VisitStat < ApplicationRecord
+end

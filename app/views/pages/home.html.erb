@@ -146,8 +146,16 @@
     display: inline-block;
   "
   >
-    <img
-      src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fkuro-site.onrender.com&label=TOTAL+VISITS&icon=emoji-sunglasses-fill&color=%2359359a&message=&style=for-the-badge&tz=US%2FCentral"
-    />
+    <%
+      today_count =
+        VisitStat.find_by(date: Date.current)&.count || 0
+
+      total_count =
+        VisitStat.sum(:count)
+    %>
+
+    <div style="font-size: 12px; opacity: 0.7;">
+      VISITS TODAY: <%= today_count %> · TOTAL VISITS: <%= total_count %>
+    </div>
   </h2>
 </body>

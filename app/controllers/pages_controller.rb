@@ -1,7 +1,13 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
 
-  def home; end
+  def home
+    today = Date.current
+    stat = VisitStat.find_or_initialize_by(date: today)
+    stat.count ||= 0
+    stat.count += 1
+    stat.save!
+  end
 
   def kuro_pictures
     @images =

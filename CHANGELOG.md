@@ -1,5 +1,6 @@
            DATE             |                SUMMARY
 ---------------------------------------------------------------------------------------------------------------
+12/25/25                    | adding extra back button to top of blogs page, moving blog button to near the top of home page
 12/22/25                    | back to using my own visit counter
 12/21/25                    | added a respects counter button to memoriam section
 12/21/25                    | added a memoriam section

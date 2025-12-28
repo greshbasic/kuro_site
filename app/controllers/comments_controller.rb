@@ -6,7 +6,7 @@ class CommentsController < ApplicationController
 
     Comment.create!(
       post_filename: c[:post_filename],
-      initials: c[:initials].presence || 'AAA',
+      initials: c[:initials].presence || 'N/A',
       body: c[:body],
     )
 

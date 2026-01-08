@@ -100,6 +100,12 @@ class PagesController < ApplicationController
     @page = (params[:page] || 1).to_i
     @total_pages = (@posts.size / POSTS_PER_PAGE.to_f).ceil
     @posts = @posts.slice((@page - 1) * POSTS_PER_PAGE, POSTS_PER_PAGE)
+
+    comment_counts = Comment.group(:post_filename).count
+    @posts =
+      @posts.map do |post|
+        post.merge(comment_count: comment_counts[post[:filename]] || 0)
+      end
   end
 
   def places

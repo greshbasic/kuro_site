@@ -174,7 +174,7 @@
       </div>
       <div style="text-align: center; margin-top: 10px;">
         <%=
-          link_to 'COMMENTS',
+          link_to "COMMENTS (#{post[:comment_count]})",
                   blog_show_path(filename: post[:filename], page: @page),
                   style:
                     '

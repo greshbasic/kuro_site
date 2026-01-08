@@ -1,5 +1,6 @@
            DATE             |                SUMMARY
 ---------------------------------------------------------------------------------------------------------------
+01/07/26                    | comment count in COMMENTS button in blog index
 01/04/26                    | new post mailer
 01/03/26                    | back on post show now returns to page of origin, not just first page
 12/25/25                    | adding extra back button to top of blogs page, moving blog button to near the top of home page

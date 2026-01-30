@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get "/kuro_toys", to: "pages#kuro_toys"
   get "/kuro_places", to: "pages#places"
   get "/memoriam", to: "pages#memoriam"
-  get "/blog", to: "pages#blog"
+  get "/blog", to: "pages#blog", as: "blog"
+  post "/blog", to: "pages#create_post"
   get "/blog/:filename", to: "pages#show_post", as: "blog_show"
 
 

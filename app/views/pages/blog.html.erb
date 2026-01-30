@@ -12,6 +12,152 @@
     KURO BLOG
   </h1>
 
+  <% if flash[:error] %>
+    <div style="background: red; color: white; padding: 10px; text-align: center; max-width: 800px; margin: 10px auto; font-family: 'Comic Sans MS';">
+      <%= flash[:error] %>
+    </div>
+  <% end %>
+
+  <% if flash[:success] %>
+    <div style="background: green; color: white; padding: 10px; text-align: center; max-width: 800px; margin: 10px auto; font-family: 'Comic Sans MS';">
+      <%= flash[:success] %>
+    </div>
+  <% end %>
+
+  <div style="text-align: center; margin: 20px;">
+    <button
+      id="add-post-btn"
+      style="
+        font-size: 20px;
+        background: lime;
+        color: black;
+        border: 3px dashed hotpink;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-family: 'Comic Sans MS';
+      "
+    >
+      + ADD POST
+    </button>
+  </div>
+
+  <div
+    id="add-post-form"
+    style="
+      display: none;
+      background: rgba(0,0,0,0.95);
+      border: 5px dashed lime;
+      padding: 20px;
+      max-width: 800px;
+      margin: 20px auto;
+      font-family: 'Comic Sans MS';
+    "
+  >
+    <div id="password-gate">
+      <h3 style="color: hotpink; text-align: center;">ENTER PASSWORD</h3>
+      <div style="text-align: center;">
+        <input
+          type="password"
+          id="password-input"
+          placeholder="Password"
+          style="padding: 10px; font-size: 16px; width: 200px;"
+        />
+        <button
+          id="password-submit"
+          style="
+            padding: 10px 20px;
+            font-size: 16px;
+            background: hotpink;
+            border: 2px solid cyan;
+            cursor: pointer;
+          "
+        >
+          ENTER
+        </button>
+      </div>
+    </div>
+
+    <div id="post-form-content" style="display: none;">
+      <h3 style="color: lime; text-align: center;">NEW KURO POST</h3>
+      <%= form_tag("/blog", method: :post, multipart: true, id: "new-post-form") do %>
+        <input type="hidden" name="password" id="form-password" value="" />
+
+        <div style="margin-bottom: 15px;">
+          <label style="color: white; display: block; margin-bottom: 5px;">TITLE:</label>
+          <input
+            type="text"
+            name="title"
+            required
+            style="width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box;"
+            placeholder="what did kuro do today?"
+          />
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="color: white; display: block; margin-bottom: 5px;">IMAGE:</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            style="color: white;"
+          />
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="color: white; display: block; margin-bottom: 5px;">BODY (markdown supported):</label>
+          <textarea
+            name="body"
+            required
+            rows="6"
+            style="width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box;"
+            placeholder="kuro did a big stretch today..."
+          ></textarea>
+        </div>
+
+        <div style="text-align: center;">
+          <button
+            type="submit"
+            style="
+              font-size: 18px;
+              background: lime;
+              color: black;
+              border: 3px dashed hotpink;
+              padding: 10px 30px;
+              cursor: pointer;
+              font-family: 'Comic Sans MS';
+            "
+          >
+            POST IT!
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('add-post-btn').addEventListener('click', function() {
+      const form = document.getElementById('add-post-form');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('password-submit').addEventListener('click', function() {
+      const password = document.getElementById('password-input').value;
+      if (password === 'Kuro422') {
+        document.getElementById('password-gate').style.display = 'none';
+        document.getElementById('post-form-content').style.display = 'block';
+        document.getElementById('form-password').value = password;
+      } else {
+        alert('Wrong password!');
+      }
+    });
+
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('password-submit').click();
+      }
+    });
+  </script>
+
   <form
     method="get"
     action="/blog"

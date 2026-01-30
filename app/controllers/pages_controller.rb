@@ -1,5 +1,6 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
+  POST_PASSWORD = "Kuro422"
 
   def home
     today = Date.current
@@ -61,7 +62,8 @@ class PagesController < ApplicationController
   end
 
   def blog
-    all_posts =
+    # Load posts from markdown files
+    file_posts =
       Dir
         .glob(Rails.root.join('app/posts/*.md'))
         .map do |file|
@@ -83,6 +85,24 @@ class PagesController < ApplicationController
             content: Kramdown::Document.new(markdown).to_html,
           }
         end
+
+    # Load posts from database
+    db_posts = Post.all.map do |post|
+      content = Kramdown::Document.new(post.body).to_html
+      if post.image_data.present?
+        img_tag = "<img src=\"data:image/jpeg;base64,#{post.image_data}\" style=\"max-width:100%; height:auto;\" />"
+        content += img_tag
+      end
+      {
+        filename: "db_#{post.id}",
+        title: post.title,
+        date: post.post_date.strftime('%Y-%m-%d'),
+        content: content,
+        db_post: true
+      }
+    end
+
+    all_posts = file_posts + db_posts
 
     if params[:year].present?
       year = params[:year].to_s.strip
@@ -108,6 +128,28 @@ class PagesController < ApplicationController
       end
   end
 
+  def create_post
+    if params[:password] != POST_PASSWORD
+      flash[:error] = "Wrong password!"
+      redirect_to blog_path and return
+    end
+
+    image_data = nil
+    if params[:image].present?
+      image_data = Base64.strict_encode64(params[:image].read)
+    end
+
+    Post.create!(
+      title: params[:title],
+      body: params[:body],
+      post_date: Date.current,
+      image_data: image_data
+    )
+
+    flash[:success] = "Post created!"
+    redirect_to blog_path
+  end
+
   def places
     @places =
       Dir
@@ -117,21 +159,40 @@ class PagesController < ApplicationController
 
   def show_post
     filename = params[:filename]
-    file = Rails.root.join("app/posts/#{filename}.md")
-    markdown = File.read(file)
 
-    markdown.gsub!(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
-      alt = $1
-      path = $2
-      "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
+    if filename.start_with?('db_')
+      # Database post
+      post_id = filename.sub('db_', '').to_i
+      post = Post.find(post_id)
+      content = Kramdown::Document.new(post.body).to_html
+      if post.image_data.present?
+        img_tag = "<img src=\"data:image/jpeg;base64,#{post.image_data}\" style=\"max-width:100%; height:auto;\" />"
+        content += img_tag
+      end
+      @post = {
+        title: post.title,
+        filename: filename,
+        date: post.post_date.strftime('%Y-%m-%d'),
+        content: content
+      }
+    else
+      # File-based post
+      file = Rails.root.join("app/posts/#{filename}.md")
+      markdown = File.read(file)
+
+      markdown.gsub!(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
+        alt = $1
+        path = $2
+        "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
+      end
+
+      @post = {
+        title: filename.split('_', 2)[1].tr('_', ' ').titleize,
+        filename: filename,
+        date: filename.split('_', 2)[0],
+        content: Kramdown::Document.new(markdown).to_html,
+      }
     end
-
-    @post = {
-      title: filename.split('_', 2)[1].tr('_', ' ').titleize,
-      filename: filename,
-      date: filename.split('_', 2)[0],
-      content: Kramdown::Document.new(markdown).to_html,
-    }
 
     @comments =
       Comment.where(post_filename: @post[:filename]).order(created_at: :desc)

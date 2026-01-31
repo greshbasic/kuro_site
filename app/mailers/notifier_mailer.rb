@@ -10,4 +10,15 @@ class NotifierMailer < ApplicationMailer
 
     mail(bcc: subscribers, subject:)
   end
+
+  def new_db_post(post)
+    @link = "https://kuro-site.onrender.com/blog/db_#{post.id}"
+    @title = post.title
+
+    subscribers = ENV['BLOG_SUBSCRIBERS'].split(',').map(&:strip)
+    date = post.post_date.strftime('%Y-%m-%d')
+    subject = "NEW KURO POST (#{date})"
+
+    mail(bcc: subscribers, subject:)
+  end
 end

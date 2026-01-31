@@ -139,12 +139,14 @@ class PagesController < ApplicationController
       image_data = Base64.strict_encode64(params[:image].read)
     end
 
-    Post.create!(
+    post = Post.create!(
       title: params[:title],
       body: params[:body],
       post_date: Date.current,
       image_data: image_data
     )
+
+    NotifierMailer.new_db_post(post).deliver_later
 
     flash[:success] = "Post created!"
     redirect_to blog_path

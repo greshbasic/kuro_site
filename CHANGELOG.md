@@ -1,5 +1,6 @@
            DATE             |                SUMMARY
 ---------------------------------------------------------------------------------------------------------------
+01/31/26                    | blog post form on site, auto mailer for form-made posts
 01/07/26                    | comment count in COMMENTS button in blog index
 01/04/26                    | new post mailer
 01/03/26                    | back on post show now returns to page of origin, not just first page

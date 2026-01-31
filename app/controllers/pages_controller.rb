@@ -1,6 +1,5 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
-  POST_PASSWORD = "Kuro422"
 
   def home
     today = Date.current
@@ -129,7 +128,7 @@ class PagesController < ApplicationController
   end
 
   def create_post
-    if params[:password] != POST_PASSWORD
+    if params[:password] != ENV['POST_PASSWORD']
       flash[:error] = "Wrong password!"
       redirect_to blog_path and return
     end
@@ -146,7 +145,7 @@ class PagesController < ApplicationController
       image_data: image_data
     )
 
-    NotifierMailer.new_db_post(post).deliver_later
+    NotifierMailer.new_db_post(post).deliver_now
 
     flash[:success] = "Post created!"
     redirect_to blog_path

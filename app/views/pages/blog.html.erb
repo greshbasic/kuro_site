@@ -310,13 +310,16 @@
       <p style="color: yellow; font-size: 16px;"><%= post[:date] %></p>
       <div>
         <%
-          content =
-            post[:content].gsub(/<img [^>]*src="([^"]+)"[^>]*>/) do
-              img_url = $1
-              "<button class=\"toggle-img\" data-src=\"#{img_url}\" style=\"display:block; margin:10px auto; padding:5px 10px; cursor:pointer;\">SHOW IMAGE</button>"
-            end
+          # Process markdown images in content (convert to toggle buttons)
+          content = (post[:content] || "").gsub(/<img [^>]*src="([^"]+)"[^>]*>/) do
+            img_url = $1
+            "<button class=\"toggle-img\" data-src=\"#{img_url}\" style=\"display:block; margin:10px auto; padding:5px 10px; cursor:pointer;\">SHOW IMAGE</button>"
+          end
         %>
         <%= content.html_safe %>
+        <% if post[:image_url].present? %>
+          <button class="toggle-img" data-src="<%= post[:image_url] %>" style="display:block; margin:10px auto; padding:5px 10px; cursor:pointer;">SHOW IMAGE</button>
+        <% end %>
       </div>
       <div style="text-align: center; margin-top: 10px;">
         <%=

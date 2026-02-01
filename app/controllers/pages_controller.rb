@@ -61,70 +61,60 @@ class PagesController < ApplicationController
   end
 
   def blog
-    # Load posts from markdown files
-    file_posts =
-      Dir
-        .glob(Rails.root.join('app/posts/*.md'))
-        .map do |file|
-          basename = File.basename(file, '.md')
-          date_str, title_str = basename.split('_', 2)
+    @page = (params[:page] || 1).to_i
 
-          markdown = File.read(file)
-          markdown =
-            markdown.gsub(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
-              alt = $1
-              path = $2
-              "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
-            end
+    # Build query with date filtering
+    posts_query = Post.order(post_date: :desc)
 
-          {
-            filename: basename,
-            title: title_str ? title_str.tr('_', ' ').titleize : 'Untitled',
-            date: date_str,
-            content: Kramdown::Document.new(markdown).to_html,
-          }
+    if params[:year].present?
+      year = params[:year].to_i
+      if params[:month].present?
+        month = params[:month].to_i
+        if params[:day].present?
+          day = params[:day].to_i
+          date = Date.new(year, month, day)
+          posts_query = posts_query.where(post_date: date)
+        else
+          start_date = Date.new(year, month, 1)
+          end_date = start_date.end_of_month
+          posts_query = posts_query.where(post_date: start_date..end_date)
         end
-
-    # Load posts from database
-    db_posts = Post.all.map do |post|
-      content = Kramdown::Document.new(post.body).to_html
-      if post.image_data.present?
-        img_tag = "<img src=\"data:image/jpeg;base64,#{post.image_data}\" style=\"max-width:100%; height:auto;\" />"
-        content += img_tag
+      else
+        start_date = Date.new(year, 1, 1)
+        end_date = Date.new(year, 12, 31)
+        posts_query = posts_query.where(post_date: start_date..end_date)
       end
-      {
+    end
+
+    # Get total count for pagination
+    total_posts = posts_query.count
+    @total_pages = (total_posts / POSTS_PER_PAGE.to_f).ceil
+
+    # Fetch only the posts for this page (proper DB pagination)
+    # Use with_attached_image to eager load attachments in a single query
+    @db_posts = posts_query
+      .with_attached_image
+      .offset((@page - 1) * POSTS_PER_PAGE)
+      .limit(POSTS_PER_PAGE)
+
+    # Build posts array with cached HTML and Active Storage image URLs
+    comment_counts = Comment.group(:post_filename).count
+    @posts = @db_posts.map do |post|
+      post_hash = {
         filename: "db_#{post.id}",
         title: post.title,
         date: post.post_date.strftime('%Y-%m-%d'),
-        content: content,
-        db_post: true
+        content: post.html_content,
+        db_post: true,
+        post_id: post.id,
+        comment_count: comment_counts["db_#{post.id}"] || 0
       }
-    end
-
-    all_posts = file_posts + db_posts
-
-    if params[:year].present?
-      year = params[:year].to_s.strip
-      month = params[:month].to_s.strip.rjust(2, '0') if params[:month].present?
-      day = params[:day].to_s.strip.rjust(2, '0') if params[:day].present?
-
-      prefix = year
-      prefix += "-#{month}" if month.present?
-      prefix += "-#{day}" if day.present?
-
-      all_posts = all_posts.select { |p| p[:date].start_with?(prefix) }
-    end
-
-    @posts = all_posts.sort_by { |p| p[:date] }.reverse
-    @page = (params[:page] || 1).to_i
-    @total_pages = (@posts.size / POSTS_PER_PAGE.to_f).ceil
-    @posts = @posts.slice((@page - 1) * POSTS_PER_PAGE, POSTS_PER_PAGE)
-
-    comment_counts = Comment.group(:post_filename).count
-    @posts =
-      @posts.map do |post|
-        post.merge(comment_count: comment_counts[post[:filename]] || 0)
+      # Include image URL if the post has an attached image
+      if post.image.attached?
+        post_hash[:image_url] = Rails.application.routes.url_helpers.rails_blob_path(post.image, only_path: true)
       end
+      post_hash
+    end
   end
 
   def create_post
@@ -133,17 +123,16 @@ class PagesController < ApplicationController
       redirect_to blog_path and return
     end
 
-    image_data = nil
-    if params[:image].present?
-      image_data = Base64.strict_encode64(params[:image].read)
-    end
-
     post = Post.create!(
       title: params[:title],
       body: params[:body],
-      post_date: Date.current,
-      image_data: image_data
+      post_date: Date.current
     )
+
+    # Attach image using Active Storage instead of base64
+    if params[:image].present?
+      post.image.attach(params[:image])
+    end
 
     NotifierMailer.new_db_post(post).deliver_now
 
@@ -161,39 +150,16 @@ class PagesController < ApplicationController
   def show_post
     filename = params[:filename]
 
-    if filename.start_with?('db_')
-      # Database post
-      post_id = filename.sub('db_', '').to_i
-      post = Post.find(post_id)
-      content = Kramdown::Document.new(post.body).to_html
-      if post.image_data.present?
-        img_tag = "<img src=\"data:image/jpeg;base64,#{post.image_data}\" style=\"max-width:100%; height:auto;\" />"
-        content += img_tag
-      end
-      @post = {
-        title: post.title,
-        filename: filename,
-        date: post.post_date.strftime('%Y-%m-%d'),
-        content: content
-      }
-    else
-      # File-based post
-      file = Rails.root.join("app/posts/#{filename}.md")
-      markdown = File.read(file)
+    # All posts are now in database (after import)
+    post_id = filename.sub('db_', '').to_i
+    @post_record = Post.find(post_id)
 
-      markdown.gsub!(/!\[([^\]]*)\]\(([^)]+)\)/) do |match|
-        alt = $1
-        path = $2
-        "![#{alt}](#{ActionController::Base.helpers.asset_path(path)})"
-      end
-
-      @post = {
-        title: filename.split('_', 2)[1].tr('_', ' ').titleize,
-        filename: filename,
-        date: filename.split('_', 2)[0],
-        content: Kramdown::Document.new(markdown).to_html,
-      }
-    end
+    @post = {
+      title: @post_record.title,
+      filename: filename,
+      date: @post_record.post_date.strftime('%Y-%m-%d'),
+      content: @post_record.html_content
+    }
 
     @comments =
       Comment.where(post_filename: @post[:filename]).order(created_at: :desc)

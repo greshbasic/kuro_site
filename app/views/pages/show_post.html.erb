@@ -25,13 +25,16 @@
     <p style="color: yellow; font-size: 16px;"><%= @post[:date] %></p>
     <div>
       <%
-        content =
-          @post[:content].gsub(/<img [^>]*src="([^"]+)"[^>]*>/) do
-            img_url = $1
-            "<img src='#{img_url}' style='max-width:100%; height:auto; display:block; margin:10px auto;' />"
-          end
+        # Process markdown images in content
+        content = (@post[:content] || "").gsub(/<img [^>]*src="([^"]+)"[^>]*>/) do
+          img_url = $1
+          "<img src='#{img_url}' style='max-width:100%; height:auto; display:block; margin:10px auto;' />"
+        end
       %>
       <%= content.html_safe %>
+      <% if @post_record&.image&.attached? %>
+        <%= image_tag rails_blob_path(@post_record.image, only_path: true), style: "max-width:100%; height:auto; display:block; margin:10px auto;" %>
+      <% end %>
     </div>
   </div>
 

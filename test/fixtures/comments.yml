@@ -2,10 +2,10 @@
 
 one:
   post_filename: MyString
-  author: MyString
+  initials: MyString
   body: MyText
 
 two:
   post_filename: MyString
-  author: MyString
+  initials: MyString
   body: MyText

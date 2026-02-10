@@ -32,8 +32,8 @@
         end
       %>
       <%= content.html_safe %>
-      <% if @post_record&.image&.attached? %>
-        <%= image_tag rails_blob_path(@post_record.image, only_path: true), style: "max-width:100%; height:auto; display:block; margin:10px auto;" %>
+      <% if @post_record&.image_path.present? %>
+        <%= image_tag "/blog/images/#{@post_record.image_path}", style: "max-width:100%; height:auto; display:block; margin:10px auto;" %>
       <% end %>
     </div>
   </div>

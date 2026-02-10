@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get "/memoriam", to: "pages#memoriam"
   get "/blog", to: "pages#blog", as: "blog"
   post "/blog", to: "pages#create_post"
-  get "/blog/images/:filename", to: "pages#post_image", as: "post_image"
+  get "/blog/images/:filename", to: "pages#post_image", as: "post_image", constraints: { filename: /[^\/]+/ }
   get "/blog/:filename", to: "pages#show_post", as: "blog_show"
 
 

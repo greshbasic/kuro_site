@@ -126,7 +126,7 @@ class PagesController < ApplicationController
     post = Post.create!(
       title: params[:title],
       body: params[:body],
-      post_date: Date.current
+      post_date: params[:post_date].present? ? Date.parse(params[:post_date]) : Date.current
     )
 
     # Attach image using Active Storage instead of base64

@@ -94,6 +94,16 @@
         </div>
 
         <div style="margin-bottom: 15px;">
+          <label style="color: white; display: block; margin-bottom: 5px;">DATE (defaults to today):</label>
+          <input
+            type="date"
+            name="post_date"
+            value="<%= Date.current.to_s %>"
+            style="width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box;"
+          />
+        </div>
+
+        <div style="margin-bottom: 15px;">
           <label style="color: white; display: block; margin-bottom: 5px;">IMAGE:</label>
           <input
             type="file"

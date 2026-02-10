@@ -1,6 +1,4 @@
 class Post < ApplicationRecord
-  has_one_attached :image
-
   validates :title, :body, :post_date, presence: true
 
   before_save :render_html_content

@@ -91,13 +91,11 @@ class PagesController < ApplicationController
     @total_pages = (total_posts / POSTS_PER_PAGE.to_f).ceil
 
     # Fetch only the posts for this page (proper DB pagination)
-    # Use with_attached_image to eager load attachments in a single query
     @db_posts = posts_query
-      .with_attached_image
       .offset((@page - 1) * POSTS_PER_PAGE)
       .limit(POSTS_PER_PAGE)
 
-    # Build posts array with cached HTML and Active Storage image URLs
+    # Build posts array with cached HTML and image URLs
     comment_counts = Comment.group(:post_filename).count
     @posts = @db_posts.map do |post|
       post_hash = {
@@ -109,9 +107,8 @@ class PagesController < ApplicationController
         post_id: post.id,
         comment_count: comment_counts["db_#{post.id}"] || 0
       }
-      # Include image URL if the post has an attached image
-      if post.image.attached?
-        post_hash[:image_url] = Rails.application.routes.url_helpers.rails_blob_path(post.image, only_path: true)
+      if post.image_path.present?
+        post_hash[:image_url] = "/blog/images/#{post.image_path}"
       end
       post_hash
     end
@@ -123,16 +120,23 @@ class PagesController < ApplicationController
       redirect_to blog_path and return
     end
 
+    post_date = params[:post_date].present? ? Date.parse(params[:post_date]) : Date.current
+
+    image_path = nil
+    if params[:image].present?
+      ext = File.extname(params[:image].original_filename)
+      image_path = "#{post_date.strftime('%m-%d-%Y')}#{ext}"
+      uploads_dir = Rails.root.join("storage", "uploads", "posts")
+      FileUtils.mkdir_p(uploads_dir)
+      FileUtils.cp(params[:image].tempfile.path, uploads_dir.join(image_path))
+    end
+
     post = Post.create!(
       title: params[:title],
       body: params[:body],
-      post_date: params[:post_date].present? ? Date.parse(params[:post_date]) : Date.current
+      post_date: post_date,
+      image_path: image_path
     )
-
-    # Attach image using Active Storage instead of base64
-    if params[:image].present?
-      post.image.attach(params[:image])
-    end
 
     NotifierMailer.new_db_post(post).deliver_now
 
@@ -145,6 +149,16 @@ class PagesController < ApplicationController
       Dir
         .glob(Rails.root.join('app/assets/images/places/*.{jpg,jpeg,png,gif}'))
         .map { |f| "places/#{File.basename(f)}" }
+  end
+
+  def post_image
+    filename = File.basename(params[:filename]) # sanitize to prevent path traversal
+    path = Rails.root.join("storage", "uploads", "posts", filename)
+    if File.exist?(path)
+      send_file path, disposition: :inline
+    else
+      head :not_found
+    end
   end
 
   def show_post

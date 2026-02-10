@@ -1,5 +1,10 @@
 class PagesController < ApplicationController
   POSTS_PER_PAGE = 5
+  UPLOADS_DIR = if Rails.env.production?
+    Pathname.new("/storage/uploads/posts")
+  else
+    Rails.root.join("storage", "uploads", "posts")
+  end
 
   def home
     today = Date.current
@@ -126,9 +131,8 @@ class PagesController < ApplicationController
     if params[:image].present?
       ext = File.extname(params[:image].original_filename)
       image_path = "#{post_date.strftime('%m-%d-%Y')}#{ext}"
-      uploads_dir = Rails.root.join("storage", "uploads", "posts")
-      FileUtils.mkdir_p(uploads_dir)
-      FileUtils.cp(params[:image].tempfile.path, uploads_dir.join(image_path))
+      FileUtils.mkdir_p(UPLOADS_DIR)
+      FileUtils.cp(params[:image].tempfile.path, UPLOADS_DIR.join(image_path))
     end
 
     post = Post.create!(
@@ -153,7 +157,7 @@ class PagesController < ApplicationController
 
   def post_image
     filename = File.basename(params[:filename]) # sanitize to prevent path traversal
-    path = Rails.root.join("storage", "uploads", "posts", filename)
+    path = UPLOADS_DIR.join(filename)
     if File.exist?(path)
       send_file path, disposition: :inline
     else
